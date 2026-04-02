@@ -13,7 +13,8 @@ RSpec.describe Mailshake::Leads do
                    headers: { "Content-Type" => "application/json" })
 
       result = leads.list
-      expect(result["results"]).to eq([])
+      expect(result).to be_a(Mailshake::Models::List)
+      expect(result.results).to eq([])
     end
 
     it "passes filter params" do
@@ -34,7 +35,8 @@ RSpec.describe Mailshake::Leads do
                    headers: { "Content-Type" => "application/json" })
 
       result = leads.get(lead_id: "42")
-      expect(result["status"]).to eq("open")
+      expect(result).to be_a(Mailshake::Models::Lead)
+      expect(result.status).to eq("open")
     end
   end
 
@@ -46,6 +48,7 @@ RSpec.describe Mailshake::Leads do
                    headers: { "Content-Type" => "application/json" })
 
       result = leads.create(campaign_id: 1, email_addresses: ["john@example.com"])
+      expect(result).to be_a(Mailshake::Models::CreatedLeads)
       expect(result["results"].length).to eq(1)
     end
   end

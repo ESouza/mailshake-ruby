@@ -3,7 +3,7 @@
 module Mailshake
   class Leads < Base
     def list(campaign_id: nil, status: nil, assigned_to_email_address: nil, search: nil, next_token: nil, per_page: nil)
-      client.get("/leads/list", camelize_params(
+      response = client.get("/leads/list", camelize_params(
         campaign_id: campaign_id,
         status: status,
         assigned_to_email_address: assigned_to_email_address,
@@ -11,23 +11,26 @@ module Mailshake
         next_token: next_token,
         per_page: per_page
       ))
+      Models::List.new(response, Models::Lead)
     end
 
     def get(lead_id: nil, recipient_id: nil, campaign_id: nil, email_address: nil)
-      client.get("/leads/get", camelize_params(
+      response = client.get("/leads/get", camelize_params(
         lead_id: lead_id,
         recipient_id: recipient_id,
         campaign_id: campaign_id,
         email_address: email_address
       ))
+      Models::Lead.new(response)
     end
 
     def create(campaign_id:, email_addresses: nil, recipient_ids: nil)
-      client.post("/leads/create", camelize_params(
+      response = client.post("/leads/create", camelize_params(
         campaign_id: campaign_id,
         email_addresses: email_addresses,
         recipient_ids: recipient_ids
       ))
+      Models::CreatedLeads.new(response)
     end
 
     def close(lead_id: nil, campaign_id: nil, email_address: nil, recipient_id: nil, status: nil)

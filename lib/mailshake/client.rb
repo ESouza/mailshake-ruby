@@ -22,7 +22,8 @@ module Mailshake
     end
 
     def me
-      get("/me")
+      response = get("/me")
+      Models::User.new(response)
     end
 
     private

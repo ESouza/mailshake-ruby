@@ -13,7 +13,8 @@ RSpec.describe Mailshake::Activity do
                    headers: { "Content-Type" => "application/json" })
 
       result = activity.sent
-      expect(result["results"]).to eq([])
+      expect(result).to be_a(Mailshake::Models::List)
+      expect(result.results).to eq([])
     end
 
     it "passes campaign and pagination params" do
@@ -34,7 +35,8 @@ RSpec.describe Mailshake::Activity do
                    headers: { "Content-Type" => "application/json" })
 
       result = activity.opens(campaign_id: "1", exclude_duplicates: "true")
-      expect(result["results"]).to eq([])
+      expect(result).to be_a(Mailshake::Models::List)
+      expect(result.results).to eq([])
     end
   end
 
