@@ -14,6 +14,7 @@ RSpec.describe Mailshake::Push do
                    headers: { "Content-Type" => "application/json" })
 
       result = push.create(target_url: "https://example.com/webhook", event: "reply")
+      expect(result).to be_a(Hash)
       expect(result["id"]).to eq(1)
     end
 

@@ -13,7 +13,8 @@ RSpec.describe Mailshake::Campaigns do
                    headers: { "Content-Type" => "application/json" })
 
       result = campaigns.list
-      expect(result["results"]).to eq([])
+      expect(result).to be_a(Mailshake::Models::List)
+      expect(result.results).to eq([])
     end
 
     it "passes search and pagination params" do
@@ -34,7 +35,8 @@ RSpec.describe Mailshake::Campaigns do
                    headers: { "Content-Type" => "application/json" })
 
       result = campaigns.get(campaign_id: "1")
-      expect(result["title"]).to eq("Test Campaign")
+      expect(result).to be_a(Mailshake::Models::Campaign)
+      expect(result.title).to eq("Test Campaign")
     end
   end
 
@@ -46,7 +48,8 @@ RSpec.describe Mailshake::Campaigns do
                    headers: { "Content-Type" => "application/json" })
 
       result = campaigns.create(title: "New Campaign", sender_id: 5)
-      expect(result["title"]).to eq("New Campaign")
+      expect(result).to be_a(Mailshake::Models::Campaign)
+      expect(result.title).to eq("New Campaign")
     end
   end
 
@@ -80,6 +83,7 @@ RSpec.describe Mailshake::Campaigns do
                    headers: { "Content-Type" => "application/json" })
 
       result = campaigns.export(campaign_ids: [1, 2], export_type: "csv", timezone: "US/Pacific")
+      expect(result).to be_a(Mailshake::Models::CampaignExportRequest)
       expect(result["statusID"]).to eq(42)
     end
   end
@@ -92,7 +96,9 @@ RSpec.describe Mailshake::Campaigns do
                    headers: { "Content-Type" => "application/json" })
 
       result = campaigns.export_status(status_id: "42")
-      expect(result["isFinished"]).to be true
+      expect(result).to be_a(Mailshake::Models::CampaignExport)
+      expect(result.is_finished).to be true
+      expect(result.csv_download_url).to eq("https://example.com/file.csv")
     end
   end
 end

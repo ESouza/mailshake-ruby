@@ -13,7 +13,8 @@ RSpec.describe Mailshake::Team do
                    headers: { "Content-Type" => "application/json" })
 
       result = team.list_members
-      expect(result["results"]).to eq([])
+      expect(result).to be_a(Mailshake::Models::List)
+      expect(result.results).to eq([])
     end
 
     it "passes search and pagination params" do

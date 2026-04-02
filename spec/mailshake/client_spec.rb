@@ -80,6 +80,7 @@ RSpec.describe Mailshake::Client do
                    headers: { "Content-Type" => "application/json" })
 
       result = client.me
+      expect(result).to be_a(Mailshake::Models::User)
       expect(result["email"]).to eq("test@example.com")
     end
   end

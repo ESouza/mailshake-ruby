@@ -14,6 +14,7 @@ RSpec.describe Mailshake::Recipients do
                    headers: { "Content-Type" => "application/json" })
 
       result = recipients.add(campaign_id: 1, addresses: [{ emailAddress: "john@example.com" }])
+      expect(result).to be_a(Mailshake::Models::AddRecipientsRequest)
       expect(result["statusID"]).to eq(10)
     end
   end
@@ -26,7 +27,8 @@ RSpec.describe Mailshake::Recipients do
                    headers: { "Content-Type" => "application/json" })
 
       result = recipients.add_status(status_id: "10")
-      expect(result["isFinished"]).to be true
+      expect(result).to be_a(Mailshake::Models::AddedRecipients)
+      expect(result.is_finished).to be true
     end
   end
 
@@ -38,7 +40,8 @@ RSpec.describe Mailshake::Recipients do
                    headers: { "Content-Type" => "application/json" })
 
       result = recipients.list(campaign_id: "1")
-      expect(result["results"]).to eq([])
+      expect(result).to be_a(Mailshake::Models::List)
+      expect(result.results).to eq([])
     end
 
     it "passes filter and pagination params" do
@@ -59,7 +62,8 @@ RSpec.describe Mailshake::Recipients do
                    headers: { "Content-Type" => "application/json" })
 
       result = recipients.get(recipient_id: "100")
-      expect(result["emailAddress"]).to eq("john@example.com")
+      expect(result).to be_a(Mailshake::Models::Recipient)
+      expect(result.email_address).to eq("john@example.com")
     end
   end
 
