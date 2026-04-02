@@ -64,7 +64,9 @@ module Mailshake
     def handle_response(response)
       case response.code
       when 200, 201, 202, 204
-        response.parsed_response
+        parsed = response.parsed_response
+        check_for_limit_errors(parsed, response)
+        parsed
       when 401
         raise AuthenticationError, "Authentication failed: #{response.body}"
       when 404
@@ -74,6 +76,7 @@ module Mailshake
         raise RateLimitError.new("Rate limit exceeded", response.code, response.body, retry_after)
       when 400, 422
         parsed = response.parsed_response || {}
+        check_for_limit_errors(parsed, response)
         errors = parsed['errors'] || {}
         raise ValidationError.new(
           parsed['message'] || 'Validation failed',
@@ -85,6 +88,23 @@ module Mailshake
         raise APIError.new("Server error", response.code, response.body)
       else
         raise APIError.new("Unexpected response", response.code, response.body)
+      end
+    end
+
+    def check_for_limit_errors(parsed, response)
+      return unless parsed.is_a?(Hash)
+
+      error_code = parsed['error'] || parsed['errorCode']
+      return unless error_code
+
+      case error_code
+      when 'limit_reached'
+        retry_after = parsed['retryAfter']
+        message = parsed['message'] || "Quota limit reached"
+        raise LimitReachedError.new(message, response.code, response.body, retry_after)
+      when 'exceeds_monthly_recipients'
+        message = parsed['message'] || "Monthly recipient limit exceeded"
+        raise MonthlyRecipientLimitError.new(message, response.code, response.body)
       end
     end
   end

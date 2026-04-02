@@ -48,4 +48,19 @@ module Mailshake
       @retry_after = retry_after
     end
   end
+
+  class LimitReachedError < APIError
+    attr_reader :retry_after
+
+    def initialize(message = "Quota limit reached", status_code = nil, response_body = nil, retry_after = nil)
+      super(message, status_code, response_body)
+      @retry_after = retry_after
+    end
+  end
+
+  class MonthlyRecipientLimitError < APIError
+    def initialize(message = "Monthly recipient limit exceeded", status_code = nil, response_body = nil)
+      super(message, status_code, response_body)
+    end
+  end
 end
