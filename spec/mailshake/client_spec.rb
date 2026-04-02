@@ -129,5 +129,58 @@ RSpec.describe Mailshake::Client do
 
       expect { client.get("/error") }.to raise_error(Mailshake::APIError)
     end
+
+    it "raises LimitReachedError when response contains limit_reached error code" do
+      stub_request(:get, "#{base_url}/quota")
+        .to_return(
+          status: 200,
+          body: {
+            error: "limit_reached",
+            message: "Please wait and try again after: 2026-04-02T16:00:00Z",
+            retryAfter: "2026-04-02T16:00:00Z"
+          }.to_json,
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      expect { client.get("/quota") }.to raise_error(Mailshake::LimitReachedError) do |error|
+        expect(error.retry_after).to eq("2026-04-02T16:00:00Z")
+        expect(error.message).to eq("Please wait and try again after: 2026-04-02T16:00:00Z")
+        expect(error.status_code).to eq(200)
+      end
+    end
+
+    it "raises LimitReachedError when errorCode field is used" do
+      stub_request(:post, "#{base_url}/quota")
+        .to_return(
+          status: 400,
+          body: {
+            errorCode: "limit_reached",
+            message: "Quota exceeded",
+            retryAfter: "2026-04-02T17:00:00Z"
+          }.to_json,
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      expect { client.post("/quota", {}) }.to raise_error(Mailshake::LimitReachedError) do |error|
+        expect(error.retry_after).to eq("2026-04-02T17:00:00Z")
+      end
+    end
+
+    it "raises MonthlyRecipientLimitError when response contains exceeds_monthly_recipients" do
+      stub_request(:post, "#{base_url}/recipients")
+        .to_return(
+          status: 400,
+          body: {
+            error: "exceeds_monthly_recipients",
+            message: "You have exceeded your monthly recipient limit"
+          }.to_json,
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      expect { client.post("/recipients", {}) }.to raise_error(Mailshake::MonthlyRecipientLimitError) do |error|
+        expect(error.message).to eq("You have exceeded your monthly recipient limit")
+        expect(error.status_code).to eq(400)
+      end
+    end
   end
 end

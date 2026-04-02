@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require_relative "lib/mailshake/version"
+
 Gem::Specification.new do |spec|
   spec.name          = 'mailshake-ruby'
-  spec.version       = "0.2.0"
+  spec.version       = Mailshake::VERSION
   spec.authors       = ['Eduardo Souza']
   spec.email         = ['eduardo@eduardosouza.com']
 
