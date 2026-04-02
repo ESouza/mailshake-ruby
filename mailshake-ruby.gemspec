@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'mailshake-ruby'
-  spec.version       = "0.1.0"
+  spec.version       = "0.1.1"
   spec.authors       = ['Eduardo Souza']
   spec.email         = ['eduardo@eduardosouza.com']
 
@@ -12,9 +12,11 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
   spec.required_ruby_version = '>= 2.7.0'
 
+  spec.metadata['allowed_push_host'] = 'https://rubygems.org'
   spec.metadata['homepage_uri'] = spec.homepage
   spec.metadata['source_code_uri'] = spec.homepage
-  spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/main/CHANGELOG.md"
+  spec.metadata['changelog_uri'] = "#{spec.homepage}/blob/master/CHANGELOG.md"
+  spec.metadata['bug_tracker_uri'] = "#{spec.homepage}/issues"
 
   spec.files = Dir.glob('{lib,spec}/**/*') + %w[README.md LICENSE.txt CHANGELOG.md]
   spec.require_paths = ['lib']
